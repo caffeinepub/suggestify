@@ -1,31 +1,39 @@
 # Suggestify
 
 ## Current State
-New project. No existing code.
+- Full campus feedback management frontend with Login, Dashboard, Submit Complaint, Complaint Detail, and Admin pages.
+- AppHeader with navigation, user dropdown, and a disabled "Settings" menu item.
+- index.css has OKLCH design tokens for light mode only — no dark mode variables, no theme switching.
+- AppContext manages auth + complaints state. No appearance state exists.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Landing/login page with role selection (Student, Staff, Faculty, Admin)
-- Complaint submission form with fields: title, category, location, description, priority
-- Dashboard showing submitted complaints with real-time status (Pending, In Progress, Resolved)
-- AI resolution plan display panel (3-step action plan, mock data ready for Gemini API integration)
-- Admin panel: view all complaints, update status, assign to department
-- Role-based navigation (different views per role)
-- Responsive layout for mobile and desktop
+- `ThemeContext` — global context storing: `theme` (light | dark), `accentColor` (indigo | emerald | rose | amber), `fontSize` (sm | md | lg). Persists to `localStorage`.
+- Dark mode CSS variables in `index.css` (`.dark` class on `<html>`).
+- Accent color CSS variable overrides for each palette option.
+- Font size CSS class overrides (`font-size-sm`, `font-size-md`, `font-size-lg`) applied to `<html>`.
+- `AppearancePage` — a dedicated `/appearance` route with three controls:
+  - Dark / Light mode toggle (Switch)
+  - Accent color picker (4 swatches: Indigo, Emerald, Rose, Amber)
+  - Font size selector (Small / Medium / Large radio group)
+- A live preview card on the AppearancePage showing how the current theme looks.
 
 ### Modify
-- N/A (new project)
+- `index.css` — add `.dark` selector with dark mode token overrides; add accent color CSS variable overrides per class; add font-size body overrides.
+- `AppHeader` — enable the "Settings" dropdown item to navigate to `/appearance` (remove `disabled` prop).
+- `App.tsx` — add `/appearance` route wrapped in `RequireAuth`; wrap entire app in `ThemeProvider`.
+- `AppContext` or new `ThemeContext` file — introduce appearance state.
 
 ### Remove
-- N/A (new project)
+- Nothing removed.
 
 ## Implementation Plan
-1. Set up app shell with role-based routing (Student/Staff/Faculty vs Admin views)
-2. Build login/role selection screen (no real auth, stubbed for Firebase Auth integration)
-3. Build complaint submission form with category, location, priority fields
-4. Build complaints list/dashboard with status badges and filters
-5. Build complaint detail view with AI resolution plan section (mock 3-step plan)
-6. Build admin panel with status update controls and department assignment
-7. Add clear API placeholder comments throughout for Node.js/Firebase backend integration
-8. Ensure full responsiveness
+1. Create `src/context/ThemeContext.tsx` with `ThemeProvider` and `useTheme` hook. Reads/writes localStorage. Applies `dark` class and accent/font-size classes to `document.documentElement`.
+2. Update `index.css`:
+   - Add `.dark` block with dark variants of all OKLCH tokens.
+   - Add `.accent-emerald`, `.accent-rose`, `.accent-amber` blocks overriding `--primary`, `--ring`, `--chart-1`.
+   - Add `.font-size-sm`, `.font-size-md`, `.font-size-lg` blocks setting `font-size` on `html`.
+3. Create `src/pages/AppearancePage.tsx` with Switch (dark mode), color swatches (accent), and RadioGroup (font size), plus a live preview card.
+4. Update `App.tsx` to wrap `AppProvider` with `ThemeProvider` and register the `/appearance` route.
+5. Update `AppHeader.tsx` to enable the Settings item and navigate to `/appearance`.

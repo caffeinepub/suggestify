@@ -14,17 +14,22 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Moon,
+  Palette,
   PlusCircle,
   Settings,
   Shield,
+  Sun,
   X,
 } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "../context/AppContext";
+import { useTheme } from "../context/ThemeContext";
 import { RoleBadge } from "./StatusBadge";
 
 export function AppHeader() {
   const { currentUser, logout } = useApp();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -67,7 +72,7 @@ export function AppHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border shadow-xs">
+    <header className="sticky top-0 z-50 bg-background border-b border-border shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -105,6 +110,25 @@ export function AppHeader() {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
+            {/* Dark mode quick toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              title={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
+              data-ocid="nav.theme_toggle_button"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </Button>
+
             {/* Notifications stub */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-4 h-4" />
@@ -149,7 +173,19 @@ export function AppHeader() {
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2" disabled>
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => navigate({ to: "/appearance" })}
+                  data-ocid="nav.appearance_link"
+                >
+                  <Palette className="w-4 h-4" />
+                  Appearance
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => navigate({ to: "/appearance" })}
+                  data-ocid="nav.settings_link"
+                >
                   <Settings className="w-4 h-4" />
                   Settings
                 </DropdownMenuItem>
@@ -184,7 +220,7 @@ export function AppHeader() {
 
       {/* Mobile nav */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-white px-4 py-3 space-y-1 animate-fade-in">
+        <div className="md:hidden border-t border-border bg-background px-4 py-3 space-y-1 animate-fade-in">
           {navLinks.map((link) => (
             <Button
               key={link.to}

@@ -7,7 +7,9 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { AppProvider, useApp } from "./context/AppContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { AdminPage } from "./pages/AdminPage";
+import { AppearancePage } from "./pages/AppearancePage";
 import { ComplaintDetailPage } from "./pages/ComplaintDetailPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -81,6 +83,16 @@ const adminRoute = createRoute({
   ),
 });
 
+const appearanceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/appearance",
+  component: () => (
+    <RequireAuth>
+      <AppearancePage />
+    </RequireAuth>
+  ),
+});
+
 // ============================================================
 // ROUTER
 // ============================================================
@@ -91,6 +103,7 @@ const routeTree = rootRoute.addChildren([
   submitRoute,
   complaintDetailRoute,
   adminRoute,
+  appearanceRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -107,9 +120,11 @@ declare module "@tanstack/react-router" {
 
 export default function App() {
   return (
-    <AppProvider>
-      <RouterProvider router={router} />
-    </AppProvider>
+    <ThemeProvider>
+      <AppProvider>
+        <RouterProvider router={router} />
+      </AppProvider>
+    </ThemeProvider>
   );
 }
 
